@@ -1,6 +1,7 @@
 use tree_sitter::{Parser, Query, QueryCursor};
 
 use crate::bindings;
+use std::vec;
 
 pub fn list(contents: &str) {
     let mut parser = Parser::new();
@@ -69,15 +70,28 @@ pub fn list(contents: &str) {
                        value: (flow_node) @tracevalue
                        ))))
         "#;
+
     let query = Query::new(language, query_string).expect("Could not construct query");
     let mut qc = QueryCursor::new();
     let provider = contents.as_bytes();
 
+
     for qm in qc.matches(&query, tree.root_node(), provider) {
-        if let Some(cap) = qm.captures.get(2) {
+        let mut resp: Vec<&str> = vec![];
+
+        if let Some(cap) = qm.captures.get(0) {
             if let Ok(route) = cap.node.utf8_text(provider) {
-                println!("{}", route);
+                resp.push(route);
             }
         }
+
+        if let Some(cap) = qm.captures.get(2) {
+            if let Ok(route) = cap.node.utf8_text(provider) {
+                resp.push(route);
+            }
+        }
+
+        println!("method: {}, operationId: {}", resp[0].to_uppercase(), resp[1]);
+
     }
 }

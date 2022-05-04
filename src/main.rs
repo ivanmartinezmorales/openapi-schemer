@@ -52,7 +52,7 @@ fn main() {
     let args = Cli::parse();
 
     match args.input {
-        None => unreachable!("Clap requires input"),
+        None => unreachable!("openapi-schemeer requires input"),
         Some(_) => match args.command {
             Commands::Operation(subcommand) => match subcommand.command {
                 OperationCommands::List => {
